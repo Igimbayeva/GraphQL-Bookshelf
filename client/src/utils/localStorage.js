@@ -1,30 +1,15 @@
-export const getSavedBookIds = () => {
-  const savedBookIds = localStorage.getItem('saved_books')
-    ? JSON.parse(localStorage.getItem('saved_books'))
-    : [];
+// Example for using Apollo Client cache or context to manage saved book IDs
+// Replace with your actual implementation based on Apollo Client setup
 
+export const getSavedBookIds = () => {
+  const savedBookIds = []; // Replace with logic to retrieve from Apollo Client cache/context
   return savedBookIds;
 };
 
 export const saveBookIds = (bookIdArr) => {
-  if (bookIdArr.length) {
-    localStorage.setItem('saved_books', JSON.stringify(bookIdArr));
-  } else {
-    localStorage.removeItem('saved_books');
-  }
+  // Replace with logic to update Apollo Client cache/context
 };
 
 export const removeBookId = (bookId) => {
-  const savedBookIds = localStorage.getItem('saved_books')
-    ? JSON.parse(localStorage.getItem('saved_books'))
-    : null;
-
-  if (!savedBookIds) {
-    return false;
-  }
-
-  const updatedSavedBookIds = savedBookIds?.filter((savedBookId) => savedBookId !== bookId);
-  localStorage.setItem('saved_books', JSON.stringify(updatedSavedBookIds));
-
-  return true;
+  // Replace with logic to update Apollo Client cache/context
 };

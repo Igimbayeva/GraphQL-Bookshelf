@@ -1,47 +1,55 @@
-// use this to decode a token and get the user's information out of it
 import decode from 'jwt-decode';
+import { LOGIN_USER } from '../graphql/mutations';
+import { useMutation } from '@apollo/client';
 
-// create a new class to instantiate for a user
 class AuthService {
-  // get user data
+  // Method to get user data from token
   getProfile() {
     return decode(this.getToken());
   }
 
-  // check if user's logged in
+  // Method to check if user is logged in
   loggedIn() {
-    // Checks if there is a saved token and it's still valid
     const token = this.getToken();
-    return !!token && !this.isTokenExpired(token); // handwaiving here
+    return !!token && !this.isTokenExpired(token);
   }
 
-  // check if token is expired
+  // Method to check if token is expired
   isTokenExpired(token) {
     try {
       const decoded = decode(token);
-      if (decoded.exp < Date.now() / 1000) {
-        return true;
-      } else return false;
+      return decoded.exp < Date.now() / 1000;
     } catch (err) {
-      return false;
+      return true;
     }
   }
 
+  // Method to retrieve token from localStorage
   getToken() {
-    // Retrieves the user token from localStorage
     return localStorage.getItem('id_token');
   }
 
-  login(idToken) {
-    // Saves user token to localStorage
+  // Method to log in user
+  async login(idToken) {
     localStorage.setItem('id_token', idToken);
     window.location.assign('/');
+
+    // Example of using useMutation hook
+    // Replace with actual implementation as per your setup
+    // const [loginUserMutation] = useMutation(LOGIN_USER);
+    // try {
+    //   const { data } = await loginUserMutation({
+    //     variables: { token: idToken },
+    //   });
+    //   // Handle successful login response as needed
+    // } catch (error) {
+    //   console.error('Login failed:', error);
+    // }
   }
 
+  // Method to log out user
   logout() {
-    // Clear user token and profile data from localStorage
     localStorage.removeItem('id_token');
-    // this will reload the page and reset the state of the application
     window.location.assign('/');
   }
 }
