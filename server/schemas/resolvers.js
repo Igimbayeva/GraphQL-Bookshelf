@@ -1,13 +1,14 @@
 // import user model
 const { User } = require('../models');
+
 // import sign token function from auth
 const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-        getSingleUser: async (parent, args, context) => {
+        getMe: async (parent, args, context) => {
             const foundUser = await User.findOne({
-                username: args.username
+                 _id: context.user._id 
             });
 
             if (!foundUser) {

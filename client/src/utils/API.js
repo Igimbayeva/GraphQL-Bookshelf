@@ -1,16 +1,10 @@
 import { useQuery, useMutation } from '@apollo/client';
-import { GET_ME, LOGIN_USER, CREATE_USER, SAVE_BOOK, DELETE_BOOK, SEARCH_BOOKS } from './queries';
+import { GET_ME } from './queries';
+import { LOGIN_USER, CREATE_USER, SAVE_BOOK, DELETE_BOOK } from './mutations';
 
 // Fetch logged in user's info
-export const getMe = (token) => {
-  const { loading, error, data } = useQuery(GET_ME, {
-    variables: { token },
-    context: {
-      headers: {
-        authorization: token ? `Bearer ${token}` : '',
-      },
-    },
-  });
+export const getMe = async () => {
+  const { loading, error, data } = await useQuery(GET_ME);
 
   return { loading, error, data };
 };
@@ -54,20 +48,20 @@ export const loginUser = (userData) => {
 };
 
 // Save book data for a logged in user
-export const saveBook = (bookData, token) => {
+export const saveBook = (bookData) => {
   const [saveBookMutation] = useMutation(SAVE_BOOK);
 
   const saveBook = async () => {
     try {
       const { data } = await saveBookMutation({
         variables: {
-          input: { ...bookData },
-        },
-        context: {
-          headers: {
-            authorization: token ? `Bearer ${token}` : '',
-          },
-        },
+          "bookId": bookData.bookId,
+          "authors": bookData.authors,
+          "description": bookData.description,
+          "image": bookData.image,
+          "link": bookData.link,
+          "title": bookData.title
+        }
       });
       return data;
     } catch (error) {
@@ -80,7 +74,7 @@ export const saveBook = (bookData, token) => {
 };
 
 // Remove saved book data for a logged in user
-export const deleteBook = (bookId, token) => {
+export const deleteBook = (bookId) => {
   const [deleteBookMutation] = useMutation(DELETE_BOOK);
 
   const deleteBook = async () => {
@@ -88,12 +82,7 @@ export const deleteBook = (bookId, token) => {
       const { data } = await deleteBookMutation({
         variables: {
           bookId,
-        },
-        context: {
-          headers: {
-            authorization: token ? `Bearer ${token}` : '',
-          },
-        },
+        }
       });
       return data;
     } catch (error) {
@@ -107,9 +96,6 @@ export const deleteBook = (bookId, token) => {
 
 // Make a search to Google Books API
 export const searchGoogleBooks = (query) => {
-  const { loading, error, data } = useQuery(SEARCH_BOOKS, {
-    variables: { query },
-  });
 
-  return { loading, error, data };
+  return fetch(`https://www.googleapis.com/books/v1/volumes?q=${query}`)
 };

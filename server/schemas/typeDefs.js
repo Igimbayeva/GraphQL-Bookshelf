@@ -22,7 +22,7 @@ const typeDefs = `
 
 
   type Query {
-    getSingleUser(username: String!): User
+    getMe: User
   }
 
   type Mutation {
