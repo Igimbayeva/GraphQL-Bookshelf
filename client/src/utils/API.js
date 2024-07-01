@@ -10,10 +10,8 @@ export const getMe = async () => {
 };
 
 // Create a new user
-export const createUser = (userData) => {
+export const createUser = async (userData) => {
   const [createUserMutation] = useMutation(CREATE_USER);
-
-  const createUser = async () => {
     try {
       const { data } = await createUserMutation({
         variables: { ...userData },
@@ -23,9 +21,6 @@ export const createUser = (userData) => {
       console.error(error);
       throw new Error('Failed to create user');
     }
-  };
-
-  return createUser;
 };
 
 // Login user

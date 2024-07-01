@@ -1,6 +1,4 @@
 import decode from 'jwt-decode';
-import { LOGIN_USER } from '../graphql/mutations';
-import { useMutation } from '@apollo/client';
 
 class AuthService {
   // Method to get user data from token

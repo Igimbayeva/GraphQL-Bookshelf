@@ -1,14 +1,19 @@
+// see SignupForm.js for comments
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { loginUser } from '../utils/API';
+
+// import { loginUser } from '../utils/API';
+import { useMutation } from '@apollo/client';
+import {LOGIN_USER} from "../utils/mutations"
+
 import Auth from '../utils/auth';
 
-
 const LoginForm = () => {
+  const [loginUser] = useMutation(LOGIN_USER)
+
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  // const client = useApolloClient();
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -18,28 +23,41 @@ const LoginForm = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
+    // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
+      event.preventDefault();
       event.stopPropagation();
-      return;
     }
 
     try {
-      const response = await loginUser(userFormData);
+      // const response = await loginUser(userFormData);
 
-      if (!response) {
-        throw new Error('Something went wrong!');
-      }
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
 
-      const { token, user } = await response;
+      // const { token, user } = await response.json();
+
+      const response = await loginUser({
+        variables: {
+          "password": userFormData.password,
+          "email": userFormData.email
+        }
+      })
+
+      const token = response.data.login.token;
+      const user = response.data.login.user
+
+      console.log(user);
       Auth.login(token);
-      // client.resetStore(); // Reset Apollo Client store upon login
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
 
     setUserFormData({
+      username: '',
       email: '',
       password: '',
     });
@@ -54,7 +72,7 @@ const LoginForm = () => {
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
-            type='email'
+            type='text'
             placeholder='Your email'
             name='email'
             onChange={handleInputChange}

@@ -1,4 +1,4 @@
-// import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Card,
@@ -7,14 +7,26 @@ import {
   Col
 } from 'react-bootstrap';
 
-import { getMe, deleteBook } from '../utils/API';
+// import { getMe } from '../utils/API';
+import { useQuery } from '@apollo/client';
+import {GET_ME} from "../utils/queries"
+
+// import { deleteBook } from '../utils/API';
+import { useMutation } from '@apollo/client';
+import {DELETE_BOOK} from "../utils/mutations"
+
+
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
-const SavedBooks = async () => {
-  const { loading, error, data } = await getMe();
-  const userData = data?.getMe || {};
+const SavedBooks = () => {
+  const [deleteBook] = useMutation(DELETE_BOOK, {
+    refetchQueries: [GET_ME]
+  })
 
+
+  const {loading, data} = useQuery(GET_ME);
+  const userData = data?.getMe;
   // const [userData, setUserData] = useState({});
 
   // use this to determine if `useEffect()` hook needs to run again
@@ -54,11 +66,20 @@ const SavedBooks = async () => {
     }
 
     try {
-      const response = await deleteBook(bookId);
+      // const response = await deleteBook(bookId, token);
 
-      if (!response) {
-        throw new Error('something went wrong!');
-      }
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
+
+      // const updatedUser = await response.json();
+      // setUserData(updatedUser);
+
+      const response = await deleteBook({
+        variables: {
+          "bookId": bookId
+        }
+      })
 
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
@@ -74,22 +95,22 @@ const SavedBooks = async () => {
 
   return (
     <>
-      <div fluid className="text-light bg-dark p-5">
+      <div fluid={"true"} className="text-light bg-dark p-5">
         <Container>
           <h1>Viewing saved books!</h1>
         </Container>
       </div>
       <Container>
         <h2 className='pt-5'>
-          {userData.savedBooks.length
+          {userData?.savedBooks?.length
             ? `Viewing ${userData.savedBooks.length} saved ${userData.savedBooks.length === 1 ? 'book' : 'books'}:`
             : 'You have no saved books!'}
         </h2>
         <Row>
-          {userData.savedBooks.map((book) => {
+          {userData?.savedBooks?.map((book) => {
             return (
-              <Col md="4">
-                <Card key={book.bookId} border='dark'>
+              <Col md="4" key={book.bookId}>
+                <Card border='dark'>
                   {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
                   <Card.Body>
                     <Card.Title>{book.title}</Card.Title>
