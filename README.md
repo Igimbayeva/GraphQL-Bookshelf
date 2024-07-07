@@ -104,10 +104,10 @@ This project is licensed under the MIT License.
 
 ## Screenshots
 
-![Search Page](./assets/screenshot1.png)
+![Search Page](https://github.com/Igimbayeva/GraphQL-Bookshelf/blob/main/assets/screenshot1.PNG?raw=true)
 *Search for books using the Google Books API.*
 
-![Saved Books](./assets/screenshot2.png)
+![Saved Books](https://github.com/Igimbayeva/GraphQL-Bookshelf/blob/main/assets/screenshot2.PNG?raw=true)
 *View and manage your saved books.*
 
 ## Links
